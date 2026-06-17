@@ -1,0 +1,144 @@
+from .models import Client
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import ClientForm, SubscriptionForm
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth.decorators import login_required
+from .models import Subscription
+from django.db.models import Q
+
+@login_required
+def client_list(request):
+    search_query = request.GET.get('q')
+
+    clients = Client.objects.all()
+
+    if search_query:
+
+        clients = clients.filter(
+            Q(name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(phone_number__icontains=search_query) |
+            Q(business_name__icontains=search_query)
+        )
+    return render(request, 'tracker/client_list.html', {
+    'clients': clients,
+    'search_query': search_query,
+})
+
+
+@login_required
+def add_client(request):
+
+    if request.method == "POST":
+        form = ClientForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('client-list')
+
+    else:
+        form = ClientForm()
+
+    return render(request, 'tracker/client_form.html', {
+        'form': form
+    })
+
+
+@login_required
+def edit_client(request, pk):
+
+    client = get_object_or_404(Client, pk=pk)
+
+    if request.method == 'POST':
+
+        form = ClientForm(
+            request.POST,
+            instance=client
+        )
+
+        if form.is_valid():
+            form.save()
+            return redirect('client-list')
+
+    else:
+
+        form = ClientForm(instance=client)
+
+    return render(
+        request,
+        'tracker/client_form.html',
+        {'form': form}
+    )
+
+
+@login_required
+def add_subscription(request):
+
+    if request.method == "POST":
+
+        form = SubscriptionForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('client-list')
+
+    else:
+        form = SubscriptionForm()
+
+    return render(
+        request,
+        'tracker/subscription_form.html',
+        {'form': form}
+    )
+
+
+@login_required
+def subscription_list(request):
+    status_filter = request.GET.get('status')
+    today = timezone.now().date()
+
+    subscriptions = Subscription.objects.all()
+
+    if status_filter:
+        subscriptions = subscriptions.filter(payment_status=status_filter)
+
+    return render(request, 'tracker/subscription_list.html', {
+        'subscriptions': subscriptions,
+        'status_filter': status_filter,
+    })
+
+@login_required
+def dashboard(request):
+
+    today = timezone.now().date()
+    next_7_days = today + timedelta(days=7)
+
+    total_clients = Client.objects.count()
+
+    active_subscriptions = Subscription.objects.filter(
+        expiry_date__gte=today
+    ).count()
+
+    expired_subscriptions = Subscription.objects.filter(
+        expiry_date__lt=today
+    ).count()
+
+    expiring_soon = Subscription.objects.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=next_7_days
+    ).count()
+
+    unpaid_subscriptions = Subscription.objects.filter(
+        payment_status='unpaid'
+    ).count()
+
+    context = {
+        'total_clients': total_clients,
+        'active_subscriptions': active_subscriptions,
+        'expired_subscriptions': expired_subscriptions,
+        'expiring_soon': expiring_soon,
+        'unpaid_subscriptions': unpaid_subscriptions,
+    }
+
+    return render(request, 'tracker/dashboard.html', context)

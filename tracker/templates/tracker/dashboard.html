@@ -1,0 +1,61 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3">
+
+    <!-- TOTAL CLIENTS -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-primary">
+            <div class="card-body text-center">
+                <h6>Total Clients</h6>
+                <h2 class="text-primary">{{ total_clients }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIVE SUBSCRIPTIONS -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-success">
+            <div class="card-body text-center">
+                <h6>Active Subscriptions</h6>
+                <h2 class="text-success">{{ active_subscriptions }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPIRED SUBSCRIPTIONS -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body text-center">
+                <h6>Expired Subscriptions</h6>
+                <h2 class="text-danger">{{ expired_subscriptions }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPIRING SOON -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body text-center">
+                <h6>Expiring Soon</h6>
+                <h2 class="text-warning">{{ expiring_soon }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- UNPAID SUBSCRIPTIONS -->
+    <div class="col-md-3 mt-3">
+        <div class="card shadow-sm border-secondary">
+            <div class="card-body text-center">
+                <h6>Unpaid Subscriptions</h6>
+                <h2 class="text-secondary">{{ unpaid_subscriptions }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
