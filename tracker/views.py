@@ -6,10 +6,12 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .models import Subscription
 from django.db.models import Q
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
 @login_required
 def client_list(request):
-    search_query = request.GET.get('q')
+    search_query = request.GET.get('q', '')
 
     clients = Client.objects.all()
 
@@ -34,7 +36,14 @@ def add_client(request):
         form = ClientForm(request.POST)
 
         if form.is_valid():
+
             form.save()
+
+            messages.success(
+                request,
+                "Client added successfully."
+            )
+
             return redirect('client-list')
 
     else:
@@ -58,7 +67,14 @@ def edit_client(request, pk):
         )
 
         if form.is_valid():
+
             form.save()
+
+            messages.success(
+                request,
+                "Client updated successfully."
+            )
+
             return redirect('client-list')
 
     else:
@@ -80,8 +96,15 @@ def add_subscription(request):
         form = SubscriptionForm(request.POST)
 
         if form.is_valid():
+
             form.save()
-            return redirect('client-list')
+
+            messages.success(
+                request,
+                "Subscription added successfully."
+            )
+
+            return redirect('subscription-list')
 
     else:
         form = SubscriptionForm()
@@ -100,8 +123,38 @@ def subscription_list(request):
 
     subscriptions = Subscription.objects.all()
 
-    if status_filter:
-        subscriptions = subscriptions.filter(payment_status=status_filter)
+    filter_type = request.GET.get('filter')
+
+    if filter_type == 'active':
+
+        subscriptions = subscriptions.filter(
+            expiry_date__gte=today
+        )
+
+    elif filter_type == 'expired':
+
+        subscriptions = subscriptions.filter(
+            expiry_date__lt=today
+        )
+
+    elif filter_type == 'expiring':
+
+        subscriptions = subscriptions.filter(
+            expiry_date__gte=today,
+            expiry_date__lte=next_7_days
+        )
+
+    elif filter_type == 'paid':
+
+        subscriptions = subscriptions.filter(
+            payment_status='paid'
+        )
+
+    elif filter_type == 'unpaid':
+
+        subscriptions = subscriptions.filter(
+            payment_status='unpaid'
+        )
 
     return render(request, 'tracker/subscription_list.html', {
         'subscriptions': subscriptions,
@@ -142,3 +195,47 @@ def dashboard(request):
     }
 
     return render(request, 'tracker/dashboard.html', context)
+
+def login_view(request):
+
+    error = None
+
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+
+            login(request, user)
+
+            return redirect('dashboard')
+
+        else:
+
+            error = "Invalid username or password."
+
+    return render(
+        request,
+        'tracker/login.html',
+        {
+            'error': error
+        }
+    )
+
+def logout_view(request):
+
+    messages.info(
+        request,
+        "You have been logged out successfully."
+    )
+
+    logout(request)
+
+    return redirect('login')

@@ -1,8 +1,77 @@
-<h2>Add Client</h2>
+{% extends 'tracker/base.html' %}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
+{% block content %}
 
-    <button type="submit">Save</button>
-</form>
+<div class="row justify-content-center">
+
+    <div class="col-md-8">
+
+        <div class="card shadow">
+
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add Client</h4>
+            </div>
+
+            <div class="card-body">
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Name
+                        </label>
+                        {{ form.name }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Phone Number
+                        </label>
+                        {{ form.phone_number }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Email
+                        </label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Business Name
+                        </label>
+                        {{ form.business_name }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Status
+                        </label>
+                        {{ form.status }}
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success">
+                        Save Client
+                    </button>
+
+                    <a href="{% url 'client-list' %}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
