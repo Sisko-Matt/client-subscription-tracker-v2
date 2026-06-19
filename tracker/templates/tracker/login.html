@@ -1,6 +1,12 @@
 {% extends 'tracker/base.html' %}
 
+{% block title %}Client Subscription Tracker - Login{% endblock %}
+
 {% block content %}
+
+<h2>Client Subscription Tracker</h2>
+
+<br>
 
 <div class="row justify-content-center">
     <div class="col-md-4">
@@ -27,15 +33,18 @@
                             required>
                     </div>
 
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            class="form-control"
-                            required>
-                    </div>
+                   <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
 
+                        <div class="input-group">
+                            <input type="password" name="password" id="password" class="form-control" required>
+
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                Show
+                            </button>
+                        </div>
+                    </div>
+                    <br>
                     <button
                         type="submit"
                         class="btn btn-primary w-100">
@@ -49,5 +58,32 @@
 
     </div>
 </div>
+
+
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById("password");
+        const type = passwordField.getAttribute("type");
+
+        if (type === "password") {
+            passwordField.setAttribute("type", "text");
+        } else {
+            passwordField.setAttribute("type", "password");
+        }
+
+    function togglePassword() {
+        const passwordField = document.getElementById("password");
+        const button = event.target;
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            button.innerText = "Hide";
+        } else {
+            passwordField.type = "password";
+            button.innerText = "Show";
+        }
+    }
+    }
+</script>
 
 {% endblock %}

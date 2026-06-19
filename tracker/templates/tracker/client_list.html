@@ -1,4 +1,7 @@
+
 {% extends 'tracker/base.html' %}
+
+{% block title %}Clients{% endblock %}
 
 {% block content %}
 
@@ -57,7 +60,7 @@
             <td>{{ client.business_name }}</td>
 
             <td>
-                {% if client.Status == 'active' %}
+                {% if client.status == 'active' %}
                     <span class="badge bg-success">Active</span>
                 {% else %}
                     <span class="badge bg-danger">Inactive</span>

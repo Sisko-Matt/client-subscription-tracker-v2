@@ -118,47 +118,52 @@ def add_subscription(request):
 
 @login_required
 def subscription_list(request):
-    status_filter = request.GET.get('status')
+
     today = timezone.now().date()
+    next_7_days = today + timedelta(days=7)
+
+    filter_type = request.GET.get('status')
 
     subscriptions = Subscription.objects.all()
 
-    filter_type = request.GET.get('filter')
-
+    # 🔥 Apply filters based on dropdown selection
     if filter_type == 'active':
-
-        subscriptions = subscriptions.filter(
-            expiry_date__gte=today
-        )
+        subscriptions = subscriptions.filter(expiry_date__gte=today)
 
     elif filter_type == 'expired':
-
-        subscriptions = subscriptions.filter(
-            expiry_date__lt=today
-        )
+        subscriptions = subscriptions.filter(expiry_date__lt=today)
 
     elif filter_type == 'expiring':
-
         subscriptions = subscriptions.filter(
             expiry_date__gte=today,
             expiry_date__lte=next_7_days
         )
 
     elif filter_type == 'paid':
-
-        subscriptions = subscriptions.filter(
-            payment_status='paid'
-        )
+        subscriptions = subscriptions.filter(payment_status='paid')
 
     elif filter_type == 'unpaid':
+        subscriptions = subscriptions.filter(payment_status='unpaid')
 
-        subscriptions = subscriptions.filter(
-            payment_status='unpaid'
-        )
+    # 🔥 Derived datasets (for dashboard-style sections if you still use them)
+    active = Subscription.objects.filter(expiry_date__gte=today)
+
+    expired = Subscription.objects.filter(expiry_date__lt=today)
+
+    expiring_soon = Subscription.objects.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=next_7_days
+    )
+
+    unpaid = Subscription.objects.filter(payment_status='unpaid')
 
     return render(request, 'tracker/subscription_list.html', {
         'subscriptions': subscriptions,
-        'status_filter': status_filter,
+        'active': active,
+        'expired': expired,
+        'expiring_soon': expiring_soon,
+        'unpaid': unpaid,
+        'filter_type': filter_type,
     })
 
 @login_required
@@ -196,38 +201,34 @@ def dashboard(request):
 
     return render(request, 'tracker/dashboard.html', context)
 
-def login_view(request):
+from django.contrib import messages
 
-    error = None
+def login_view(request):
 
     if request.method == 'POST':
 
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        user = authenticate(
-            request,
-            username=username,
-            password=password
-        )
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
-
             login(request, user)
+
+            messages.success(
+                request,
+                f"Login Success. Welcome back, {user.username}!"
+            )
 
             return redirect('dashboard')
 
         else:
+            messages.error(
+                request,
+                "Invalid username or password."
+            )
 
-            error = "Invalid username or password."
-
-    return render(
-        request,
-        'tracker/login.html',
-        {
-            'error': error
-        }
-    )
+    return render(request, 'tracker/login.html')
 
 def logout_view(request):
 

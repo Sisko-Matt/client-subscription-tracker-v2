@@ -1,4 +1,7 @@
+
 {% extends 'tracker/base.html' %}
+
+{% block title %}Subscriptions{% endblock %}
 
 {% block content %}
 
@@ -8,6 +11,55 @@
    class="btn btn-success mb-3">
    Add New Subscription
 </a>
+
+<form method="GET" class="mb-3">
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+            <select name="status" class="form-select">
+
+                <option value="">
+                    All Subscriptions
+                </option>
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="expired">
+                    Expired
+                </option>
+
+                <option value="expiring">
+                    Expiring Soon
+                </option>
+
+                <option value="paid">
+                    Paid
+                </option>
+
+                <option value="unpaid">
+                    Unpaid
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <button type="submit" class="btn btn-primary w-100">
+                Filter
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
 <table class="table table-bordered table-striped">
 
     <thead class="table-dark">

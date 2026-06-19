@@ -1,5 +1,9 @@
 from django.test import TestCase
 from .models import Client
+from django.test import TestCase
+from tracker.forms import SubscriptionForm
+from datetime import date, timedelta
+
 
 class ClientModelTest(TestCase):
 
@@ -16,3 +20,20 @@ class ClientModelTest(TestCase):
             client.name,
             'Test Client'
         )
+
+
+class SubscriptionFormTests(TestCase):
+
+    def test_expiry_date_cannot_be_before_start_date(self):
+
+        form = SubscriptionForm(data={
+
+            'start_date': date.today(),
+            'expiry_date': date.today() - timedelta(days=1),
+
+            # add required fields if your model requires them:
+            'payment_status': 'unpaid',
+            'amount_paid': 0
+        })
+
+        self.assertFalse(form.is_valid())
