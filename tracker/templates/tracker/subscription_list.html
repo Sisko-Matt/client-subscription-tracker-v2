@@ -6,13 +6,13 @@
 {% block content %}
 
 <h2 class="mb-3">Subscriptions</h2>
-
+<p>Current Filter: {{ filter_type }}</p>
 <a href="{% url 'add-subscription' %}"
    class="btn btn-success mb-3">
    Add New Subscription
 </a>
 
-<form method="GET" class="mb-3">
+<form method="GET">
 
     <div class="row">
 
@@ -50,7 +50,9 @@
 
         <div class="col-md-2">
 
-            <button type="submit" class="btn btn-primary w-100">
+            <button
+                type="submit"
+                class="btn btn-primary w-100">
                 Filter
             </button>
 
