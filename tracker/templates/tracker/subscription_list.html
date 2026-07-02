@@ -12,6 +12,7 @@
    Add New Subscription
 </a>
 
+
 <form method="GET">
 
     <div class="row">
@@ -62,6 +63,7 @@
 
 </form>
 
+
 <table class="table table-bordered table-striped">
 
     <thead class="table-dark">
@@ -90,6 +92,9 @@
 
 </table>
 
+<a href="{% url 'export_subscriptions' %}" class="btn btn-success">
+    Export Subscriptions (CSV)
+</a>
 
 
 {% endblock %}

@@ -13,6 +13,10 @@ urlpatterns = [
     views.add_subscription,
     name='add-subscription'),
     path('login/', views.login_view, name='login'),
-
+    path(
+        'export/subscriptions/',
+        views.export_subscriptions_csv,
+        name='export_subscriptions'
+    ),
     path('logout/', views.logout_view, name='logout'),
 ]

@@ -1,4 +1,7 @@
 from .models import Client
+import csv
+from django.http import HttpResponse
+from .models import Subscription
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ClientForm, SubscriptionForm
 from django.utils import timezone
@@ -6,6 +9,7 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .models import Subscription
 from django.db.models import Q
+from datetime import date
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
@@ -52,6 +56,39 @@ def add_client(request):
     return render(request, 'tracker/client_form.html', {
         'form': form
     })
+
+
+def export_subscriptions_csv(request):
+    today = date.today()
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="Subscriptions {today}.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow([
+        'Client',
+        'Business',
+        'Start Date',
+        'Expiry Date',
+        'Amount Paid',
+        'Payment Status',
+        'Notes'
+    ])
+
+    subscriptions = Subscription.objects.select_related('client').all()
+
+    for subscription in subscriptions:
+        writer.writerow([
+            subscription.client.name,
+            subscription.client.business_name,
+            subscription.start_date,
+            subscription.expiry_date,
+            subscription.amount_paid,
+            subscription.payment_status,
+            subscription.notes
+        ])
+
+    return response
 
 
 @login_required
