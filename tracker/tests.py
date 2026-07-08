@@ -1,6 +1,5 @@
 from django.test import TestCase
 from .models import Client
-from django.test import TestCase
 from tracker.forms import SubscriptionForm
 from datetime import date, timedelta
 
@@ -44,3 +43,8 @@ class SubscriptionFormTests(TestCase):
         })
 
         self.assertFalse(form.is_valid())
+        self.assertIn("__all__", form.errors)
+        self.assertIn(
+            "Expiry date cannot be before start date.",
+            form.errors["__all__"]
+        )

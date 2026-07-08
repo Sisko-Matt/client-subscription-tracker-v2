@@ -29,25 +29,58 @@ A Django-based web application for managing clients and their subscriptions. It 
 
 ## Setup Instructions
 
-### 1. Clone repository
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/Sisko-Matt/client-subscription-tracker-v2.git
 cd client-subscription-tracker-v2
-2. Create virtual environment
+```
+
+### 2. Create a virtual environment
+
+```bash
 python -m venv env
 env\Scripts\activate
-3. Install dependencies
+```
+
+### 3. Install dependencies
+
+```bash
 pip install django
-4. Run migrations
+```
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Create the MySQL database
+
+```sql
+CREATE DATABASE client_subscription_tracker;
+```
+
+### 5. Apply migrations
+
+```bash
 python manage.py migrate
-5. Create superuser
+```
+
+### 6. Create a superuser
+
+```bash
 python manage.py createsuperuser
-6. Run server
+```
+
+### 7. Run the development server
+
+```bash
 python manage.py runserver
-Login Details
+```
 
-Use the superuser account created above.
+## Login
 
-Author
+Use the superuser account you created above.
+
+## Author
 
 Felix Omondi

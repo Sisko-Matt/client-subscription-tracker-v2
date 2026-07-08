@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from datetime import timedelta
+from datetime import date, timedelta
 from .forms import ClientForm, SubscriptionForm
 from .models import Client, Subscription
 
