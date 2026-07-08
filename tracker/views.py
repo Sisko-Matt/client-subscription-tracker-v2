@@ -1,17 +1,14 @@
-from .models import Client
 import csv
-from django.http import HttpResponse
-from .models import Subscription
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ClientForm, SubscriptionForm
-from django.utils import timezone
-from datetime import timedelta
-from django.contrib.auth.decorators import login_required
-from .models import Subscription
-from django.db.models import Q
-from datetime import date
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from .forms import ClientForm, SubscriptionForm
+from .models import Client, Subscription
+
 
 @login_required
 def client_list(request):
@@ -57,7 +54,7 @@ def add_client(request):
         'form': form
     })
 
-
+@login_required
 def export_subscriptions_csv(request):
     today = date.today()
     response = HttpResponse(content_type='text/csv')
@@ -71,8 +68,7 @@ def export_subscriptions_csv(request):
         'Start Date',
         'Expiry Date',
         'Amount Paid',
-        'Payment Status',
-        'Notes'
+        'Payment Status'
     ])
 
     subscriptions = Subscription.objects.select_related('client').all()
@@ -84,8 +80,7 @@ def export_subscriptions_csv(request):
             subscription.start_date,
             subscription.expiry_date,
             subscription.amount_paid,
-            subscription.payment_status,
-            subscription.notes
+            subscription.payment_status
         ])
 
     return response

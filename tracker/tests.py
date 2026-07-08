@@ -26,12 +26,19 @@ class SubscriptionFormTests(TestCase):
 
     def test_expiry_date_cannot_be_before_start_date(self):
 
-        form = SubscriptionForm(data={
+        # Create a valid client
+        client = Client.objects.create(
+            name='John Doe',
+            phone_number='0712345678',
+            email='john@example.com',
+            business_name='ABC Ltd'
+        )
 
+        # Create a form with an invalid expiry date
+        form = SubscriptionForm(data={
+            'client': client.id,
             'start_date': date.today(),
             'expiry_date': date.today() - timedelta(days=1),
-
-            # add required fields if your model requires them:
             'payment_status': 'unpaid',
             'amount_paid': 0
         })
